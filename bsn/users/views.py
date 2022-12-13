@@ -1,10 +1,8 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, generics, mixins, permissions
+from rest_framework import viewsets, mixins, permissions
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
-from rest_framework.mixins import ListModelMixin
 from rest_framework.response import Response
-from rest_framework.viewsets import ViewSetMixin
 
 from users.models import CustomUser
 from users.serializers import UserSerializer, RegisterUserSerializer
@@ -28,7 +26,11 @@ class UserViewSet(viewsets.ViewSet):
         if serializer.is_valid():
             serializer.create(serializer.validated_data)
             return Response({'result': 'success', 'message': 'user created'})
-        raise ValidationError({'result': 'error', 'message': 'invalid data'})
+        raise ValidationError({
+            'result': 'error',
+            'message': 'invalid data',
+            'errors': serializer.errors
+        })
 
 
 class SubscribersViewSet(viewsets.ViewSet):
